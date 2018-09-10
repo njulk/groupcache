@@ -52,7 +52,7 @@ func New(maxEntries int) *Cache {
 	}
 }
 
-// Add adds a value to the cache.
+// Add adds a value to the cache.如果当前缓存有数据，则将其放在List最前端，没有的话添加数据到缓存最前端。
 func (c *Cache) Add(key Key, value interface{}) {
 	if c.cache == nil {
 		c.cache = make(map[interface{}]*list.Element)
@@ -60,7 +60,7 @@ func (c *Cache) Add(key Key, value interface{}) {
 	}
 	if ee, ok := c.cache[key]; ok {
 		c.ll.MoveToFront(ee)
-		ee.Value.(*entry).value = value
+		ee.Value.(*entry).value = value//此处有涉嫌改变数据的嫌疑
 		return
 	}
 	ele := c.ll.PushFront(&entry{key, value})

@@ -52,7 +52,7 @@ func New(maxEntries int) *Cache {
 	}
 }
 
-// Add adds a value to the cache.如果当前缓存有数据，则将其放在List最前端，没有的话添加数据到缓存最前端。
+// Add adds a value to the cache.如果当前缓存有数据，则将其放在List最前端，没有的话添加数据到map和list头部，如果超过缓存的最大数量，就通过List尾部，删除最不常用的数据
 func (c *Cache) Add(key Key, value interface{}) {
 	if c.cache == nil {
 		c.cache = make(map[interface{}]*list.Element)
@@ -70,7 +70,7 @@ func (c *Cache) Add(key Key, value interface{}) {
 	}
 }
 
-// Get looks up a key's value from the cache.
+// Get looks up a key's value from the cache.查询key对应的数据，有的话将list中对应的数据放于头部
 func (c *Cache) Get(key Key) (value interface{}, ok bool) {
 	if c.cache == nil {
 		return
@@ -82,7 +82,7 @@ func (c *Cache) Get(key Key) (value interface{}, ok bool) {
 	return
 }
 
-// Remove removes the provided key from the cache.
+// Remove removes the provided key from the cache.根据key值去除map和list中的数据
 func (c *Cache) Remove(key Key) {
 	if c.cache == nil {
 		return
@@ -92,7 +92,7 @@ func (c *Cache) Remove(key Key) {
 	}
 }
 
-// RemoveOldest removes the oldest item from the cache.
+// RemoveOldest removes the oldest item from the cache.//根据list尾部的数据，去除map和list中的数据
 func (c *Cache) RemoveOldest() {
 	if c.cache == nil {
 		return
@@ -103,6 +103,7 @@ func (c *Cache) RemoveOldest() {
 	}
 }
 
+//根据list.Element去除map和list中的数据
 func (c *Cache) removeElement(e *list.Element) {
 	c.ll.Remove(e)
 	kv := e.Value.(*entry)
@@ -112,7 +113,7 @@ func (c *Cache) removeElement(e *list.Element) {
 	}
 }
 
-// Len returns the number of items in the cache.
+// Len returns the number of items in the cache.根据list获取缓存的长度
 func (c *Cache) Len() int {
 	if c.cache == nil {
 		return 0

@@ -27,9 +27,9 @@ type Hash func(data []byte) uint32
 
 type Map struct {
 	hash     Hash
-	replicas int
+	replicas int //每个服务器对应的虚拟节点的个数
 	keys     []int // Sorted
-	hashMap  map[int]string
+	hashMap  map[int]string //虚拟节点到实际服务器的映射
 }
 
 func New(replicas int, fn Hash) *Map {
@@ -49,7 +49,7 @@ func (m *Map) IsEmpty() bool {
 	return len(m.keys) == 0
 }
 
-// Adds some keys to the hash.
+// Adds some keys to the hash.添加虚拟节点，
 func (m *Map) Add(keys ...string) {
 	for _, key := range keys {
 		for i := 0; i < m.replicas; i++ {
@@ -61,7 +61,7 @@ func (m *Map) Add(keys ...string) {
 	sort.Ints(m.keys)
 }
 
-// Gets the closest item in the hash to the provided key.
+// Gets the closest item in the hash to the provided key.获取实际服务器的名称
 func (m *Map) Get(key string) string {
 	if m.IsEmpty() {
 		return ""
